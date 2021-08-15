@@ -1,10 +1,11 @@
 package by.it.academy.dao;
 
+import by.it.academy.beans.RegistrationInfo;
 import by.it.academy.beans.User;
 import by.it.academy.exeptions.DAOException;
 
-public interface DAOUser {
+public interface DaoUser extends Dao<Long,User> {
 
-    void registrationNewUser(User user) throws DAOException;
+    void registrationNewUser(RegistrationInfo info) throws DAOException;
     User authorizationUser(String login,String password) throws DAOException;
 }

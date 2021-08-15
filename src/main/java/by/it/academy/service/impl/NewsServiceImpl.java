@@ -9,12 +9,14 @@ import java.util.List;
 public class NewsServiceImpl implements NewsService {
 
     @Override
-    public void addNews(News news) throws ServiceException {
-
+    public boolean addNews(News news) throws ServiceException {
+        return false;
     }
 
     @Override
     public List<News> getNews() throws ServiceException {
+
         return null;
     }
+
 }

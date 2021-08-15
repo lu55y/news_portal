@@ -5,8 +5,8 @@ import by.it.academy.exeptions.ServiceException;
 
 import java.util.List;
 
-public interface NewsService {
+public interface NewsService{
 
-    void addNews(News news) throws ServiceException;
+    boolean addNews(News news) throws ServiceException;
     List<News> getNews() throws ServiceException;
 }

@@ -9,7 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 
-@WebServlet("/by/it/academy/controller")
+@WebServlet("/controller")
 public class Controller extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;

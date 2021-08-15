@@ -1,27 +1,4 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
-
-	<title>News Portal</title>
-</head>
-  </head>
-  <body>
-    <!-- Navigation bar -->
-    
-	<nav class="navbar">
-	<div class="container">
-    	<a class="navbar-brand" href="index.jsp">News Portal</a>
-	</div>
-	</nav>
-	<br>
-	<br>
-	<br>
+<jsp:include page="header.jsp"/>
 	
 	<!-- Registration form -->
 	<form class="row g-3">
@@ -45,6 +22,5 @@
     		<button type="submit" class="btn btn-primary">Sign in</button>
   		</div>
 	</form>
-	
-  </body>
-</html>
+
+<jsp:include page="footer.jsp"/>

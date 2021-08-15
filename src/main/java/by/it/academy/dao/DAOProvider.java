@@ -5,24 +5,23 @@ import by.it.academy.dao.impl.DAOUserImpl;
 
 import java.sql.Connection;
 
-public class DAOProvider {
-    private static Connection connection;
-    public static final DAOProvider INSTANCE = new DAOProvider(connection);
-    private final DAOUser daoUser = new DAOUserImpl();
-    private final DAONews daoNews = new DAONewsImpl();
+public class DaoProvider {
+    public static final DaoProvider INSTANCE = new DaoProvider();
+    private final DaoUser daoUser = new DAOUserImpl();
+    private final DaoNews daoNews = new DAONewsImpl();
 
-    public DAOProvider(Connection connection) {
+    public DaoProvider() {
     }
 
-    public static DAOProvider getINSTANCE() {
+    public static DaoProvider getINSTANCE() {
         return INSTANCE;
     }
 
-    public DAOUser getDaoUser() {
+    public DaoUser getDaoUser() {
         return daoUser;
     }
 
-    public DAONews getDaoNews() {
+    public DaoNews getDaoNews() {
         return daoNews;
     }
 }

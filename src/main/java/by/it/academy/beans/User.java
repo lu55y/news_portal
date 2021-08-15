@@ -2,8 +2,9 @@ package by.it.academy.beans;
 
 import java.util.Objects;
 
-public class User {
+public class User extends Entity{
 
+    private int id;
     private String name;
     private String surname;
     private String email;
@@ -11,13 +12,22 @@ public class User {
     private String role;
     private String dateOfRegistration;
 
-    public User(String name, String surname, String email, String password, String role, String dateOfRegistration) {
+    public User(int id, String name, String surname, String email, String password, String role, String dateOfRegistration) {
+        this.id = id;
         this.name = name;
         this.surname = surname;
         this.email = email;
         this.password = password;
         this.role = role;
         this.dateOfRegistration = dateOfRegistration;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -73,18 +83,19 @@ public class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(name, user.name) && Objects.equals(surname, user.surname) && Objects.equals(email, user.email) && Objects.equals(password, user.password) && Objects.equals(role, user.role) && Objects.equals(dateOfRegistration, user.dateOfRegistration);
+        return id == user.id && Objects.equals(name, user.name) && Objects.equals(surname, user.surname) && Objects.equals(email, user.email) && Objects.equals(password, user.password) && Objects.equals(role, user.role) && Objects.equals(dateOfRegistration, user.dateOfRegistration);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, surname, email, password, role, dateOfRegistration);
+        return Objects.hash(id, name, surname, email, password, role, dateOfRegistration);
     }
 
     @Override
     public String toString() {
         return "User{" +
-                "name='" + name + '\'' +
+                "id=" + id +
+                ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
