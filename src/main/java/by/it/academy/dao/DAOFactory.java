@@ -1,7 +1,7 @@
-package by.it.academy.dao;
+package main.java.by.it.academy.dao;
 
-import by.it.academy.exeptions.DAOException;
-import by.it.academy.exeptions.DriverException;
+import main.java.by.it.academy.exeptions.DAOException;
+import main.java.by.it.academy.exeptions.DriverException;
 import jakarta.servlet.ServletConfig;
 
 import java.sql.Connection;
