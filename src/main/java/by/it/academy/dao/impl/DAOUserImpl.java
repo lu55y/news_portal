@@ -3,13 +3,13 @@ package by.it.academy.dao.impl;
 import by.it.academy.dao.config.DBCPDataSourceFactory;
 import by.it.academy.beans.RegistrationInfo;
 import by.it.academy.beans.User;
-import by.it.academy.dao.DaoUser;
+import by.it.academy.dao.DAOUser;
 import by.it.academy.exeptions.DAOException;
 
 import java.sql.*;
 import java.util.List;
 
-public class DAOUserImpl implements DaoUser {
+public class DAOUserImpl implements DAOUser {
 
 
     @Override
@@ -77,7 +77,7 @@ public class DAOUserImpl implements DaoUser {
     }
 
     @Override
-    public User findEntityById(Long id) {
+    public User findById(Integer id) {
         return null;
     }
 
@@ -87,7 +87,7 @@ public class DAOUserImpl implements DaoUser {
     }
 
     @Override
-    public boolean delete(Long id) {
+    public boolean delete(Integer id) {
         return false;
     }
 

@@ -1,24 +1,30 @@
 package by.it.academy.dao;
 
 import by.it.academy.beans.Entity;
+import by.it.academy.exeptions.DAOException;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 
-public interface Dao <K,T extends Entity> {
+public interface Dao<K, T extends Entity> {
 
-    List<T> findAll();
-    T findEntityById(K id);
-    boolean delete(T t);
-    boolean delete(K id);
-    boolean create(T t);
-    T update(T t);
+    List<T> findAll() throws DAOException;
 
-    default void closeStatement(Statement statement){
+    T findById(K id) throws DAOException;
+
+    boolean delete(T t) throws DAOException;
+
+    boolean delete(K id) throws DAOException;
+
+    boolean create(T t) throws DAOException;
+
+    T update(T t) throws DAOException;
+
+    default void closeStatement(Statement statement) {
         try {
-            if (statement!=null) {
+            if (statement != null) {
                 statement.close();
             }
         } catch (SQLException e) {
@@ -26,9 +32,10 @@ public interface Dao <K,T extends Entity> {
             e.printStackTrace();
         }
     }
-    default void closeConnection(Connection connection){
+
+    default void closeConnection(Connection connection) {
         try {
-            if (connection!=null) {
+            if (connection != null) {
                 //return connection to pool
                 connection.close();
             }

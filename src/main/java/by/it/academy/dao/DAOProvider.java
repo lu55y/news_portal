@@ -3,25 +3,23 @@ package by.it.academy.dao;
 import by.it.academy.dao.impl.DAONewsImpl;
 import by.it.academy.dao.impl.DAOUserImpl;
 
-import java.sql.Connection;
+public class DAOProvider {
+    public static final DAOProvider INSTANCE = new DAOProvider();
+    private final DAOUser daoUser = new DAOUserImpl();
+    private final DAONews daoNews = new DAONewsImpl();
 
-public class DaoProvider {
-    public static final DaoProvider INSTANCE = new DaoProvider();
-    private final DaoUser daoUser = new DAOUserImpl();
-    private final DaoNews daoNews = new DAONewsImpl();
-
-    public DaoProvider() {
+    public DAOProvider() {
     }
 
-    public static DaoProvider getINSTANCE() {
+    public static DAOProvider getINSTANCE() {
         return INSTANCE;
     }
 
-    public DaoUser getDaoUser() {
+    public DAOUser getDaoUser() {
         return daoUser;
     }
 
-    public DaoNews getDaoNews() {
+    public DAONews getDaoNews() {
         return daoNews;
     }
 }

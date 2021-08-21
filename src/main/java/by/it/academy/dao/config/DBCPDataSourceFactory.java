@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 
+import by.it.academy.exeptions.DAOException;
 import org.apache.commons.dbcp2.BasicDataSource;
 
 public class DBCPDataSourceFactory {

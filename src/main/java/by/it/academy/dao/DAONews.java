@@ -4,6 +4,6 @@ import by.it.academy.beans.News;
 
 import java.util.List;
 
-public interface DaoNews extends Dao<Long,News>{
+public interface DAONews extends Dao<Integer,News>{
     List<News> findNewsByTitle(String title);
 }

@@ -1,6 +1,10 @@
 package by.it.academy.exeptions;
 
-public class ServiceException extends Exception {
+import java.io.Serial;
+
+public class ServiceException extends Exception{
+    @Serial
+    private static final long serialVersionUID = -2545176754559216684L;
 
     public ServiceException() {
         super();
@@ -8,5 +12,13 @@ public class ServiceException extends Exception {
 
     public ServiceException(String message) {
         super(message);
+    }
+
+    public ServiceException(Exception e) {
+        super(e);
+    }
+
+    public ServiceException(String message, Exception e) {
+        super(message, e);
     }
 }
