@@ -1,7 +1,7 @@
 package by.it.academy.service;
 
-import by.it.academy.beans.RegistrationInfo;
-import by.it.academy.beans.User;
+import by.it.academy.bean.RegistrationInfo;
+import by.it.academy.bean.User;
 import by.it.academy.exeptions.ServiceException;
 
 public interface UserService {

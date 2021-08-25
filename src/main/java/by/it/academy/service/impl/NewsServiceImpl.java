@@ -1,6 +1,6 @@
 package by.it.academy.service.impl;
 
-import by.it.academy.beans.News;
+import by.it.academy.bean.News;
 import by.it.academy.exeptions.ServiceException;
 import by.it.academy.service.NewsService;
 

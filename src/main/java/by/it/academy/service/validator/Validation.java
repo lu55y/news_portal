@@ -1,6 +1,6 @@
 package by.it.academy.service.validator;
 
-import by.it.academy.beans.RegistrationInfo;
+import by.it.academy.bean.RegistrationInfo;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

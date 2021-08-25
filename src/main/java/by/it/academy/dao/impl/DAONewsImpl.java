@@ -1,7 +1,7 @@
 package by.it.academy.dao.impl;
 
 import by.it.academy.dao.config.DBCPDataSourceFactory;
-import by.it.academy.beans.News;
+import by.it.academy.bean.News;
 import by.it.academy.dao.DAONews;
 
 import java.sql.Connection;
@@ -156,6 +156,11 @@ public class DAONewsImpl implements DAONews {
             return false;
         } catch (SQLException e) {
             //log
+            try {
+                connection.rollback();
+            } catch (SQLException exception) {
+                exception.printStackTrace();
+            }
             e.printStackTrace();
         }finally {
             closeStatement(prepStmt);
@@ -167,6 +172,11 @@ public class DAONewsImpl implements DAONews {
     @Override
     public News update(News news) {
         Connection connection = null;
+//        try {
+//            connection.setTransactionIsolation(4);
+//        } catch (SQLException exception) {
+//            exception.printStackTrace();
+//        }
         String SQLQuery = "update news_portal.news set news.title=? and news.briefDescription=? Where news.id=? AND news.title=? AND news.briefDescription=?";
         PreparedStatement prepStmt = null;
         try {
@@ -183,6 +193,11 @@ public class DAONewsImpl implements DAONews {
             return null;
         } catch (SQLException e) {
             //log
+            try {
+                connection.rollback();
+            } catch (SQLException exception) {
+                exception.printStackTrace();
+            }
             e.printStackTrace();
         }finally {
             closeStatement(prepStmt);
@@ -193,6 +208,32 @@ public class DAONewsImpl implements DAONews {
 
     @Override
     public boolean delete(Integer id) {
+        Connection connection = null;
+        String SQLQuery = "DELETE FROM news_portal.news Where news.id=?";
+        PreparedStatement prepStmt = null;
+        try {
+            connection= getInstance().getConnection();
+            prepStmt=connection.prepareStatement(SQLQuery);
+            prepStmt.setInt(1,id);
+            int i = prepStmt.executeUpdate();
+            if (i>=1){
+                //
+                System.out.println("Delete News:" + i);
+                //
+                return true;
+            }connection.rollback();
+        } catch (SQLException e) {
+            //log
+            try {
+                connection.rollback();
+            } catch (SQLException exception) {
+                //log
+            }
+            e.printStackTrace();
+        }finally {
+            closeStatement(prepStmt);
+            closeConnection(connection);
+        }
         return false;
     }
 

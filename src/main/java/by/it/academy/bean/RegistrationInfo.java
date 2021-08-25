@@ -1,4 +1,4 @@
-package by.it.academy.beans;
+package by.it.academy.bean;
 
 import java.util.Objects;
 

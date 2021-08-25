@@ -1,6 +1,6 @@
 package by.it.academy.dao;
 
-import by.it.academy.beans.Entity;
+import by.it.academy.bean.Entity;
 import by.it.academy.exeptions.DAOException;
 
 import java.sql.Connection;

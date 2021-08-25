@@ -1,6 +1,6 @@
 package by.it.academy.dao;
 
-import by.it.academy.beans.News;
+import by.it.academy.bean.News;
 
 import java.util.List;
 
