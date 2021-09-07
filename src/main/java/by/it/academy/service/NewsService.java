@@ -1,8 +1,7 @@
 package by.it.academy.service;
 
 import by.it.academy.bean.News;
-import by.it.academy.exeptions.DAOException;
-import by.it.academy.exeptions.ServiceException;
+import by.it.academy.exeption.ServiceException;
 
 import java.util.List;
 

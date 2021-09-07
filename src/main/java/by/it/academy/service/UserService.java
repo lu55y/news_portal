@@ -2,7 +2,7 @@ package by.it.academy.service;
 
 import by.it.academy.bean.RegistrationInfo;
 import by.it.academy.bean.User;
-import by.it.academy.exeptions.ServiceException;
+import by.it.academy.exeption.ServiceException;
 
 import java.util.List;
 

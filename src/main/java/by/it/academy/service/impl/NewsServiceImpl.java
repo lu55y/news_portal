@@ -3,8 +3,8 @@ package by.it.academy.service.impl;
 import by.it.academy.bean.News;
 import by.it.academy.dao.DAONews;
 import by.it.academy.dao.DAOProvider;
-import by.it.academy.exeptions.DAOException;
-import by.it.academy.exeptions.ServiceException;
+import by.it.academy.exeption.DAOException;
+import by.it.academy.exeption.ServiceException;
 import by.it.academy.service.NewsService;
 
 import java.util.List;

@@ -4,8 +4,8 @@ import by.it.academy.bean.RegistrationInfo;
 import by.it.academy.bean.User;
 import by.it.academy.dao.DAOUser;
 import by.it.academy.dao.config.ConnectionPool;
-import by.it.academy.exeptions.ConnectionPoolException;
-import by.it.academy.exeptions.DAOException;
+import by.it.academy.exeption.ConnectionPoolException;
+import by.it.academy.exeption.DAOException;
 
 import java.sql.*;
 import java.text.SimpleDateFormat;

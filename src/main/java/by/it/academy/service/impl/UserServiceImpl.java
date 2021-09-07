@@ -4,8 +4,8 @@ import by.it.academy.bean.RegistrationInfo;
 import by.it.academy.bean.User;
 import by.it.academy.dao.DAOProvider;
 import by.it.academy.dao.DAOUser;
-import by.it.academy.exeptions.DAOException;
-import by.it.academy.exeptions.ServiceException;
+import by.it.academy.exeption.DAOException;
+import by.it.academy.exeption.ServiceException;
 import by.it.academy.service.UserService;
 import by.it.academy.service.validator.UserAuthorizationValidator;
 

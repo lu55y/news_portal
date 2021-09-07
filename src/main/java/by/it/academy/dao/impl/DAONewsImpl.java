@@ -3,8 +3,8 @@ package by.it.academy.dao.impl;
 import by.it.academy.bean.News;
 import by.it.academy.dao.DAONews;
 import by.it.academy.dao.config.ConnectionPool;
-import by.it.academy.exeptions.ConnectionPoolException;
-import by.it.academy.exeptions.DAOException;
+import by.it.academy.exeption.ConnectionPoolException;
+import by.it.academy.exeption.DAOException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

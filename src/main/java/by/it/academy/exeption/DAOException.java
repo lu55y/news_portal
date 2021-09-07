@@ -1,4 +1,4 @@
-package by.it.academy.exeptions;
+package by.it.academy.exeption;
 
 import java.io.Serial;
 

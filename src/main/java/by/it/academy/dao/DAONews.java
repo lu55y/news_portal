@@ -1,8 +1,7 @@
 package by.it.academy.dao;
 
 import by.it.academy.bean.News;
-import by.it.academy.bean.User;
-import by.it.academy.exeptions.DAOException;
+import by.it.academy.exeption.DAOException;
 
 import java.util.List;
 

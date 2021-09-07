@@ -1,7 +1,7 @@
 package by.it.academy.dao.config;
 
-import by.it.academy.exeptions.ConnectionPoolException;
-import by.it.academy.exeptions.DriverException;
+import by.it.academy.exeption.ConnectionPoolException;
+import by.it.academy.exeption.DriverException;
 
 import java.sql.*;
 import java.util.Locale;
