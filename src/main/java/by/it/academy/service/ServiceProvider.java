@@ -11,7 +11,7 @@ public class ServiceProvider {
     private ServiceProvider() {
     }
 
-    public static ServiceProvider getINSTANCE() {
+    public static ServiceProvider getInstance() {
         return INSTANCE;
     }
 

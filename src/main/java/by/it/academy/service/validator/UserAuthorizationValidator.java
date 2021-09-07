@@ -5,7 +5,7 @@ import by.it.academy.bean.RegistrationInfo;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Validation {
+public class UserAuthorizationValidator {
 
     //A-Z characters are permitted
     //a-z characters are permitted
@@ -24,7 +24,7 @@ public class Validation {
     //$ represents the end of the string.
     private static final String REGEX_PASSWORD = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&-+=()])(?=\\S+$).{8,20}$";
 
-    public Validation() {
+    public UserAuthorizationValidator() {
     }
 
     public boolean validate(RegistrationInfo info) {
@@ -34,10 +34,17 @@ public class Validation {
             if (validateEmail(email) && validatePassword(password)) {
             return true;
             }
-            System.out.println("ERROR: not valid");
             return false;
         } else
-            System.out.println("ERROR: info is empty!");
+            return false;
+    }
+    public boolean validate(String email, String password) {
+        if (!email.isEmpty() && !password.isEmpty()) {
+            if (validateEmail(email) && validatePassword(password)) {
+            return true;
+            }
+            return false;
+        } else
             return false;
     }
 

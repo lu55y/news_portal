@@ -1,243 +1,251 @@
 package by.it.academy.dao.impl;
 
-import by.it.academy.dao.config.DBCPDataSourceFactory;
 import by.it.academy.bean.News;
 import by.it.academy.dao.DAONews;
+import by.it.academy.dao.config.ConnectionPool;
+import by.it.academy.exeptions.ConnectionPoolException;
+import by.it.academy.exeptions.DAOException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class DAONewsImpl implements DAONews {
+    private static final ConnectionPool CONNECTION_POOL = ConnectionPool.getInstance();
+    private static final ReentrantLock LOCKER=new ReentrantLock();
+    private static final String SHOW_ALL_NEWS_DEFAULT= "SELECT * FROM news_portal.news WHERE news_status='PUBLISHED'";
+    private static final String SHOW_ALL_NEWS = "SELECT * FROM news_portal.news";
+    private static final String SHOW_NEWS_BY_TITLE = "SELECT * FROM news_portal.news WHERE news.title=?";
+    private static final String FIND_NEWS_BY_ID = "SELECT * FROM news_portal.news WHERE news.id=?";
+    private static final String UPDATE_NEWS = "UPDATE news_portal.news SET news.title=? and news.brief_description=? and news.content=? WHERE news.id=?";
+    private static final String DELETE_NEWS_BY_ID = "DELETE FROM news_portal.news WHERE news.id=?";
+    private static final String OFFER_NEWS = "INSERT INTO news_portal.news (title, brief_description, content, date_of_publication, news_status) VALUES (?,?,?,?,DEFAULT)";
+    private static final String PUBLISH_NEWS = "UPDATE news_portal.news SET news.news_status=? WHERE news.id=?";
+
+    private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    private final String ID="id";
+    private final String TITLE="title";
+    private final String BRIEF_DESCRIPTION="brief_description";
+    private final String CONTENT="content";
+    private final String DATE_OF_PUBLICATION="date_of_publication";
+    private final String NEWS_STATUS="news_status";
+
     @Override
-    public List<News> findAll() {
+    public List<News> findAll() throws DAOException {
         List<News> listNews = new ArrayList<>();
-        Connection connection = null;
-        String SQLQuery = "SELECT * FROM news_portal.news";
-        PreparedStatement prepStmt = null;
-        ResultSet resultSet=null;
-        try {
-            connection= getInstance().getConnection();
-            prepStmt=connection.prepareStatement(SQLQuery);
-            resultSet= prepStmt.executeQuery();
-            while (resultSet.next()){
-                int newsId = resultSet.getInt(1);
-                String newsTitle = resultSet.getString(2);
-                String newsBriefDescription = resultSet.getString(3);
-                News news=new News(newsId,newsTitle,newsBriefDescription);
+        try (Connection connection = CONNECTION_POOL.takeConnection();
+             PreparedStatement prepStmt = connection.prepareStatement(SHOW_ALL_NEWS);
+             ResultSet resultSet = prepStmt.executeQuery()) {
+            while (resultSet.next()) {
+                News news = new News(resultSet.getInt(ID),
+                        resultSet.getString(TITLE),
+                        resultSet.getString(BRIEF_DESCRIPTION),
+                        resultSet.getString(CONTENT),
+                        resultSet.getString(DATE_OF_PUBLICATION),
+                        resultSet.getString(NEWS_STATUS));
                 listNews.add(news);
-//
-                System.out.println("Title:" + newsTitle);
-                System.out.println("Brief Description:" + newsBriefDescription);
+            }
+            return listNews;
+        } catch (SQLException e) {
+            //log
+            throw new DAOException("News search error:", e);
+        } catch (ConnectionPoolException e) {
+            //log
+            throw new DAOException("Connection error:", e);
+        }
+    }
+
+    public List<News> findAllPublished() throws DAOException {
+        List<News> listNews = new ArrayList<>();
+        try (Connection connection = CONNECTION_POOL.takeConnection();
+             PreparedStatement prepStmt = connection.prepareStatement(SHOW_ALL_NEWS_DEFAULT);
+             ResultSet resultSet = prepStmt.executeQuery()) {
+            while (resultSet.next()) {
+                News news = new News(resultSet.getInt(ID),
+                        resultSet.getString(TITLE),
+                        resultSet.getString(BRIEF_DESCRIPTION),
+                        resultSet.getString(CONTENT),
+                        resultSet.getString(DATE_OF_PUBLICATION),
+                        resultSet.getString(NEWS_STATUS));
+                listNews.add(news);
+            }
+            return listNews;
+        } catch (SQLException e) {
+            //log
+            throw new DAOException("News search error:", e);
+        } catch (ConnectionPoolException e) {
+            //log
+            throw new DAOException("Connection error:", e);
+        }
+    }
+
+    @Override
+    public List<News> findNewsByTitle(String title) throws DAOException {
+        List<News> listNews = new ArrayList<>();
+        ResultSet resultSet = null;
+        try (Connection connection = CONNECTION_POOL.takeConnection();
+             PreparedStatement prepStmt = connection.prepareStatement(SHOW_NEWS_BY_TITLE)) {
+            prepStmt.setString(1, title);
+            resultSet = prepStmt.executeQuery();
+            while (resultSet.next()) {
+                News news = new News(resultSet.getInt(ID),
+                        resultSet.getString(TITLE),
+                        resultSet.getString(BRIEF_DESCRIPTION),
+                        resultSet.getString(CONTENT),
+                        resultSet.getString(DATE_OF_PUBLICATION),
+                        resultSet.getString(NEWS_STATUS));
+                listNews.add(news);
             }
         } catch (SQLException e) {
             //log
-            e.printStackTrace();
-        }finally {
-            closeStatement(prepStmt);
-            closeConnection(connection);
+            throw new DAOException("News search by title error:", e);
+        } catch (ConnectionPoolException e) {
+            //log
+            throw new DAOException("Connection error:", e);
+        } finally {
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e) {
+                    //log
+                    throw new DAOException("Close error", e);
+                }
+            }
         }
         return listNews;
     }
 
     @Override
-    public List<News> findNewsByTitle(String title) {
-        List<News> listNews = new ArrayList<>();
-        Connection connection = null;
-        String SQLQuery = "SELECT * FROM news_portal.news Where news.title=?";
-        PreparedStatement prepStmt = null;
-        ResultSet resultSet=null;
-        try {
-            connection= getInstance().getConnection();
-            prepStmt=connection.prepareStatement(SQLQuery);
-            prepStmt.setString(1,title);
-            resultSet= prepStmt.executeQuery();
-            while (resultSet.next()){
-                int newsId = resultSet.getInt(1);
-                String newsTitle = resultSet.getString(2);
-                String newsBriefDescription = resultSet.getString(3);
-                News news=new News(newsId,newsTitle,newsBriefDescription);
-                listNews.add(news);
-//
-                System.out.println("Title:" + newsTitle);
-                System.out.println("Brief Description:" + newsBriefDescription);
-                return listNews;
+    public News findById(Integer id) throws DAOException {
+        ResultSet resultSet = null;
+        try (Connection connection = CONNECTION_POOL.takeConnection();
+             PreparedStatement prepStmt = connection.prepareStatement(FIND_NEWS_BY_ID)) {
+            prepStmt.setInt(1, id);
+            resultSet = prepStmt.executeQuery();
+            if (resultSet.next()) {
+                return  new News(resultSet.getInt(ID),
+                        resultSet.getString(TITLE),
+                        resultSet.getString(BRIEF_DESCRIPTION),
+                        resultSet.getString(CONTENT),
+                        resultSet.getString(DATE_OF_PUBLICATION),
+                        resultSet.getString(NEWS_STATUS));
             }
         } catch (SQLException e) {
             //log
-            e.printStackTrace();
-        }finally {
-            closeStatement(prepStmt);
-            closeConnection(connection);
-        }
-        return listNews;
-    }
-
-    @Override
-    public News findById(Integer id) {
-        Connection connection = null;
-        String SQLQuery = "SELECT * FROM news_portal.news Where news.id=?";
-        PreparedStatement prepStmt = null;
-        ResultSet resultSet=null;
-        try {
-            connection= getInstance().getConnection();
-            prepStmt=connection.prepareStatement(SQLQuery);
-            prepStmt.setInt(1,id);
-            resultSet= prepStmt.executeQuery();
-            while (resultSet.next()){
-                int newsId = resultSet.getInt(1);
-                String newsTitle = resultSet.getString(2);
-                String newsBriefDescription = resultSet.getString(3);
-                News news=new News(newsId,newsTitle,newsBriefDescription);
-
-        //
-                System.out.println("Title:" + newsTitle);
-                System.out.println("Brief Description:" + newsBriefDescription);
-        //
-                return news;
-            }
-        } catch (SQLException e) {
+            throw new DAOException("News search by id error:", e);
+        } catch (ConnectionPoolException e) {
             //log
-            e.printStackTrace();
-        }finally {
-            closeStatement(prepStmt);
-            closeConnection(connection);
+            throw new DAOException("Connection error:", e);
+        } finally {
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e) {
+                    //log
+                    throw new DAOException("Close error", e);
+                }
+            }
         }
         return null;
     }
 
     @Override
-    public boolean delete(News news) {
-        Connection connection = null;
-        String SQLQuery = "delete news FROM news_portal.news Where news.id=? AND news.title=? AND news.briefDescription=?";
-        PreparedStatement prepStmt = null;
-        try {
-            connection= getInstance().getConnection();
-            prepStmt=connection.prepareStatement(SQLQuery);
-            prepStmt.setInt(1,news.getId());
-            prepStmt.setString(2,news.getTitle());
-            prepStmt.setString(3,news.getBriefDescription());
+    public boolean updateNews(News news) throws DAOException {
+        LOCKER.lock();
+        try (Connection connection = CONNECTION_POOL.takeConnection();
+             PreparedStatement prepStmt = connection.prepareStatement(UPDATE_NEWS)) {
+            prepStmt.setString(1, news.getTitle());
+            prepStmt.setString(2, news.getBriefDescription());
+            prepStmt.setString(3, news.getContent());
+            prepStmt.setInt(4, news.getId());
             int i = prepStmt.executeUpdate();
-            if (i>=1){
-                return true;
-            }
-            connection.rollback();
-            return false;
+            if (i >= 1) return true;
         } catch (SQLException e) {
             //log
-            e.printStackTrace();
-        }finally {
-            closeStatement(prepStmt);
-            closeConnection(connection);
-        }
-        return false;
-    }
-
-
-    @Override
-    public boolean create(News news) {
-        Connection connection = null;
-        String SQLQuery = "insert into news_portal.news (ID, TITLE, BRIEFDESCRIPTION) values (?,?,?)";
-        PreparedStatement prepStmt = null;
-        try {
-            connection= getInstance().getConnection();
-            prepStmt=connection.prepareStatement(SQLQuery);
-            prepStmt.setInt(1,news.getId());
-            prepStmt.setString(2,news.getTitle());
-            prepStmt.setString(3,news.getBriefDescription());
-            int i = prepStmt.executeUpdate();
-            if (i>=1){
-                return true;
-            }
-            connection.rollback();
-            return false;
-        } catch (SQLException e) {
+            throw new DAOException("News update error:", e);
+        } catch (ConnectionPoolException e) {
             //log
-            try {
-                connection.rollback();
-            } catch (SQLException exception) {
-                exception.printStackTrace();
-            }
-            e.printStackTrace();
+            throw new DAOException("Connection error:", e);
         }finally {
-            closeStatement(prepStmt);
-            closeConnection(connection);
+            LOCKER.unlock();
         }
         return false;
     }
 
     @Override
-    public News update(News news) {
-        Connection connection = null;
-//        try {
-//            connection.setTransactionIsolation(4);
-//        } catch (SQLException exception) {
-//            exception.printStackTrace();
-//        }
-        String SQLQuery = "update news_portal.news set news.title=? and news.briefDescription=? Where news.id=? AND news.title=? AND news.briefDescription=?";
-        PreparedStatement prepStmt = null;
-        try {
-            connection= getInstance().getConnection();
-            prepStmt=connection.prepareStatement(SQLQuery);
-            prepStmt.setInt(1,news.getId());
-            prepStmt.setString(2,news.getTitle());
-            prepStmt.setString(3,news.getBriefDescription());
+    public boolean deleteByID(Integer id) throws DAOException {
+        LOCKER.lock();
+        try (Connection connection =CONNECTION_POOL.takeConnection() ;
+             PreparedStatement prepStmt = connection.prepareStatement(DELETE_NEWS_BY_ID)){
+            prepStmt.setInt(1, id);
             int i = prepStmt.executeUpdate();
-            if (i>=1){
-                return news;
-            }
-            connection.rollback();
-            return null;
-        } catch (SQLException e) {
+            if (i >= 1) return true;
+        } catch(SQLException e){
             //log
-            try {
-                connection.rollback();
-            } catch (SQLException exception) {
-                exception.printStackTrace();
-            }
-            e.printStackTrace();
-        }finally {
-            closeStatement(prepStmt);
-            closeConnection(connection);
-        }
-        return null;
-    }
-
-    @Override
-    public boolean delete(Integer id) {
-        Connection connection = null;
-        String SQLQuery = "DELETE FROM news_portal.news Where news.id=?";
-        PreparedStatement prepStmt = null;
-        try {
-            connection= getInstance().getConnection();
-            prepStmt=connection.prepareStatement(SQLQuery);
-            prepStmt.setInt(1,id);
-            int i = prepStmt.executeUpdate();
-            if (i>=1){
-                //
-                System.out.println("Delete News:" + i);
-                //
-                return true;
-            }connection.rollback();
-        } catch (SQLException e) {
+            throw new DAOException("Deleting news by id error:", e);
+        } catch (ConnectionPoolException e) {
             //log
-            try {
-                connection.rollback();
-            } catch (SQLException exception) {
-                //log
-            }
-            e.printStackTrace();
+            throw new DAOException("Connection error:", e);
         }finally {
-            closeStatement(prepStmt);
-            closeConnection(connection);
+            LOCKER.unlock();
         }
         return false;
     }
 
-    private DBCPDataSourceFactory getInstance() {
-        return DBCPDataSourceFactory.getInstance();
+    @Override
+    public boolean offerNews(News news) throws DAOException {
+        LOCKER.lock();
+        try (Connection connection = CONNECTION_POOL.takeConnection();
+             PreparedStatement prepStmt = connection.prepareStatement(OFFER_NEWS)) {
+            prepStmt.setString(1, news.getTitle());
+            prepStmt.setString(2, news.getBriefDescription());
+            prepStmt.setString(3, news.getContent());
+            prepStmt.setString(4, getDate());
+            int i = prepStmt.executeUpdate();
+            if (i >= 1) return true;
+        } catch (SQLException e) {
+            //log
+            throw new DAOException("Error creating news:", e);
+        } catch (ConnectionPoolException e) {
+            //log
+            throw new DAOException("Connection error:", e);
+        }finally {
+            LOCKER.unlock();
+        }
+        return false;
+    }
+
+    @Override
+    public boolean publishNews(News news) throws DAOException {
+        LOCKER.lock();
+        try (Connection connection = CONNECTION_POOL.takeConnection();
+             PreparedStatement prepStmt = connection.prepareStatement(PUBLISH_NEWS)) {
+            String PUBLISH = "PUBLISHED";
+            prepStmt.setString(1, PUBLISH);
+            prepStmt.setInt(2, news.getId());
+            int i = prepStmt.executeUpdate();
+            if (i >= 1) return true;
+        } catch (SQLException e) {
+            //log
+            throw new DAOException("News update error:", e);
+        } catch (ConnectionPoolException e) {
+            //log
+            throw new DAOException("Connection error:", e);
+        }finally {
+            LOCKER.unlock();
+        }
+        return false;
+    }
+
+    private String getDate() {
+        Date date = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
+        return dateFormat.format(date);
     }
 }

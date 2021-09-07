@@ -1,31 +1,28 @@
 package by.it.academy.bean;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Objects;
 
-public class RegistrationInfo extends Entity {
+public class RegistrationInfo implements Serializable {
 
-    private int id;
+    @Serial
+    private static final long serialVersionUID = -8466398016991010162L;
+
     private String name;
     private String surname;
     private String email;
     private String password;
+    private String role;
     private String dateOfRegistration;
 
-    public RegistrationInfo(int id, String name, String surname, String email, String password, String dateOfRegistration) {
-        this.id = id;
+    public RegistrationInfo(String name, String surname, String email, String password, String role, String dateOfRegistration) {
         this.name = name;
         this.surname = surname;
         this.email = email;
         this.password = password;
+        this.role = role;
         this.dateOfRegistration = dateOfRegistration;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -60,6 +57,14 @@ public class RegistrationInfo extends Entity {
         this.password = password;
     }
 
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
     public String getDateOfRegistration() {
         return dateOfRegistration;
     }
@@ -73,22 +78,22 @@ public class RegistrationInfo extends Entity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         RegistrationInfo that = (RegistrationInfo) o;
-        return id == that.id && Objects.equals(name, that.name) && Objects.equals(surname, that.surname) && Objects.equals(email, that.email) && Objects.equals(password, that.password) && Objects.equals(dateOfRegistration, that.dateOfRegistration);
+        return Objects.equals(name, that.name) && Objects.equals(surname, that.surname) && Objects.equals(email, that.email) && Objects.equals(password, that.password) && Objects.equals(role, that.role) && Objects.equals(dateOfRegistration, that.dateOfRegistration);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, surname, email, password, dateOfRegistration);
+        return Objects.hash(name, surname, email, password, role, dateOfRegistration);
     }
 
     @Override
     public String toString() {
         return "RegistrationInfo{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
+                "name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
+                ", role='" + role + '\'' +
                 ", dateOfRegistration='" + dateOfRegistration + '\'' +
                 '}';
     }

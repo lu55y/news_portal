@@ -1,8 +1,13 @@
 package by.it.academy.bean;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Objects;
 
-public class User extends Entity{
+public class User implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 3127886122193020696L;
 
     private int id;
     private String name;
@@ -12,7 +17,8 @@ public class User extends Entity{
     private String role;
     private String dateOfRegistration;
 
-    public User(int id, String name, String surname, String email, String password, String role, String dateOfRegistration) {
+    public User(int id, String name, String surname, String email, String password,
+                String role, String dateOfRegistration) {
         this.id = id;
         this.name = name;
         this.surname = surname;
@@ -83,7 +89,8 @@ public class User extends Entity{
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return id == user.id && Objects.equals(name, user.name) && Objects.equals(surname, user.surname) && Objects.equals(email, user.email) && Objects.equals(password, user.password) && Objects.equals(role, user.role) && Objects.equals(dateOfRegistration, user.dateOfRegistration);
+        return id == user.id && Objects.equals(name, user.name) && Objects.equals(surname, user.surname) && Objects.equals(email, user.email)
+                && Objects.equals(password, user.password) && Objects.equals(role, user.role) && Objects.equals(dateOfRegistration, user.dateOfRegistration);
     }
 
     @Override
@@ -99,7 +106,7 @@ public class User extends Entity{
                 ", surname='" + surname + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
-                ", role='" + role + '\'' +
+                ", role=" + role +
                 ", dateOfRegistration='" + dateOfRegistration + '\'' +
                 '}';
     }
