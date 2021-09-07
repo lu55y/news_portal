@@ -1,7 +1,7 @@
 package by.it.academy.service;
 
 import by.it.academy.bean.News;
-import by.it.academy.exeption.ServiceException;
+import by.it.academy.service.exeption.ServiceException;
 
 import java.util.List;
 
@@ -22,4 +22,6 @@ public interface NewsService{
     boolean offerNews(News news) throws ServiceException;
 
     boolean publishNews(News news)throws ServiceException;
+
+    List<News> getLastNews() throws ServiceException;
 }

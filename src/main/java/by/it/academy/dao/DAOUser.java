@@ -2,7 +2,7 @@ package by.it.academy.dao;
 
 import by.it.academy.bean.RegistrationInfo;
 import by.it.academy.bean.User;
-import by.it.academy.exeption.DAOException;
+import by.it.academy.dao.exeption.DAOException;
 
 import java.util.List;
 

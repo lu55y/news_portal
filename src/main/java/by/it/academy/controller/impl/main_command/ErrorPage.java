@@ -1,4 +1,4 @@
-package by.it.academy.controller.impl;
+package by.it.academy.controller.impl.main_command;
 
 import by.it.academy.controller.Command;
 import jakarta.servlet.RequestDispatcher;

@@ -1,6 +1,10 @@
 package by.it.academy.controller;
 
-import by.it.academy.controller.impl.*;
+import by.it.academy.controller.impl.main_command.ErrorPage;
+import by.it.academy.controller.impl.main_command.MainPage;
+import by.it.academy.controller.impl.news_command.NewsPage;
+import by.it.academy.controller.impl.user_command.AuthorizationPage;
+import by.it.academy.controller.impl.user_command.RegistrationPage;
 
 import java.util.HashMap;
 import java.util.Map;

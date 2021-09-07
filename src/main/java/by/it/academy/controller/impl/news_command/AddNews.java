@@ -1,4 +1,4 @@
-package by.it.academy.controller.impl;
+package by.it.academy.controller.impl.news_command;
 
 import by.it.academy.bean.User;
 import by.it.academy.controller.Command;
@@ -22,7 +22,7 @@ public class AddNews implements Command {
         if (session==null)
             response.sendRedirect("Controller?command=go_to_authorization_page&message=Session lost, please try later.");
             return;
-        User user = session.getAttribute(USER);
+
 
     }
 }

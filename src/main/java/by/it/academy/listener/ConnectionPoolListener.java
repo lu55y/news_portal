@@ -1,8 +1,8 @@
 package by.it.academy.listener;
 
 import by.it.academy.dao.config.ConnectionPool;
-import by.it.academy.exeption.ConnectionPoolException;
-import by.it.academy.exeption.DriverException;
+import by.it.academy.dao.exeption.ConnectionPoolException;
+import by.it.academy.dao.exeption.DriverException;
 import jakarta.servlet.ServletContextListener;
 
 public class ConnectionPoolListener implements ServletContextListener {
