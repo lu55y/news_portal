@@ -1,10 +1,8 @@
 package by.it.academy.dao.config;
 
 import by.it.academy.dao.exeption.ConnectionPoolException;
-import by.it.academy.dao.exeption.DriverException;
 
 import java.sql.*;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -19,7 +17,7 @@ public class ConnectionPool {
     }
 
     private BlockingQueue<Connection> connectionQueue;
-    private BlockingQueue<Connection> givenAwayConnection;
+    private BlockingQueue<Connection> giveAwayConQueue;
 
     private final String driverName;
     private final String url;
@@ -29,47 +27,55 @@ public class ConnectionPool {
 
     private ConnectionPool() {
         DBResourceManager dbResourceManager = DBResourceManager.getInstance();
-        this.driverName = dbResourceManager.getValue(DBParameters.DB_DRIVER);
-        this.url = dbResourceManager.getValue(DBParameters.DB_URL);
-        this.user = dbResourceManager.getValue(DBParameters.DB_USER);
-        this.password = dbResourceManager.getValue(DBParameters.DB_PASSWORD);
+        this.driverName = dbResourceManager.getKey(DBParameter.DB_DRIVER);
+        this.url = dbResourceManager.getKey(DBParameter.DB_URL);
+        this.user = dbResourceManager.getKey(DBParameter.DB_USER);
+        this.password = dbResourceManager.getKey(DBParameter.DB_PASSWORD);
         try {
-            this.poolSize = Integer.parseInt(dbResourceManager.getValue(DBParameters.DB_POLL_SIZE));
+            this.poolSize = Integer.parseInt(dbResourceManager.getKey(DBParameter.DB_POOL_SIZE));
         } catch (NumberFormatException e) {
             poolSize = 5;
         }
-    }
-
-    public void initPoolData() throws ConnectionPoolException, DriverException {
-        Locale.setDefault(Locale.ENGLISH);
         try {
-            Class.forName(driverName);
-            givenAwayConnection = new ArrayBlockingQueue<>(poolSize);
-            connectionQueue = new ArrayBlockingQueue<>(poolSize);
-            for (int i = 0; i < poolSize; i++) {
-                Connection connection = DriverManager.getConnection(url, user, password);
-            }
-        } catch (ClassNotFoundException e) {
-            throw new DriverException("Driver initialization error", e);
-        } catch (SQLException e) {
-            throw new ConnectionPoolException("SQLException in ConnectionPool", e);
+            initPoolData();
+        } catch (ConnectionPoolException e) {
+            //log
+            throw new RuntimeException("Initializing exception:",e);
         }
     }
 
+    public void initPoolData() throws ConnectionPoolException {
+        try {
+            Class.forName(driverName);
+            giveAwayConQueue = new ArrayBlockingQueue<>(poolSize);
+            connectionQueue = new ArrayBlockingQueue<>(poolSize);
+            for (int i = 0; i < poolSize; i++) {
+                Connection connection = DriverManager.getConnection(url, user, password);
+                PooledConnection pooledConnection = new PooledConnection(connection);
+                connectionQueue.add(pooledConnection);
+            }
+        } catch (ClassNotFoundException e) {
+            throw new ConnectionPoolException("Can't find database driver class", e);
+        } catch (SQLException e) {
+            throw new ConnectionPoolException("SQLException in ConnectionPool", e);
+        }
+
+    }
+
     public Connection takeConnection() throws ConnectionPoolException {
-        Connection connection = null;
+        Connection connection;
         try {
             connection = connectionQueue.take();
-            givenAwayConnection.add(connection);
+            giveAwayConQueue.add(connection);
         } catch (InterruptedException e) {
             throw new ConnectionPoolException("Error connecting to the data source.", e);
         }
         return connection;
     }
 
-    public void dispose() {
+    public void dispose() throws ConnectionPoolException {
         clearConnectionQueue();
-        deregisterDrivers();
+//        deregisterDrivers();
     }
 
     public void closeConnection(Connection connection, Statement statement, ResultSet resultSet) throws ConnectionPoolException {
@@ -118,12 +124,12 @@ public class ConnectionPool {
         }
     }
 
-    private void clearConnectionQueue() {
+    private void clearConnectionQueue() throws ConnectionPoolException {
         try {
-            closeConnectionQueue(givenAwayConnection);
+            closeConnectionQueue(giveAwayConQueue);
             closeConnectionQueue(connectionQueue);
         } catch (SQLException e) {
-            //log
+            throw new ConnectionPoolException("Closing Connection Queue exception",e);
         }
     }
 
@@ -148,7 +154,7 @@ public class ConnectionPool {
     }
 
     private class PooledConnection implements Connection {
-        private final Connection connection;
+        Connection connection;
 
         public PooledConnection(Connection con) throws SQLException {
             this.connection = con;
@@ -161,32 +167,32 @@ public class ConnectionPool {
 
         @Override
         public Statement createStatement() throws SQLException {
-            return null;
+            return connection.createStatement();
         }
 
         @Override
         public PreparedStatement prepareStatement(String sql) throws SQLException {
-            return null;
+            return connection.prepareStatement(sql);
         }
 
         @Override
         public CallableStatement prepareCall(String sql) throws SQLException {
-            return null;
+            return connection.prepareCall(sql);
         }
 
         @Override
         public String nativeSQL(String sql) throws SQLException {
-            return null;
+            return connection.nativeSQL(sql);
         }
 
         @Override
         public void setAutoCommit(boolean autoCommit) throws SQLException {
-
+            connection.setAutoCommit(autoCommit);
         }
 
         @Override
         public boolean getAutoCommit() throws SQLException {
-            return false;
+            return connection.getAutoCommit();
         }
 
         @Override
@@ -196,7 +202,7 @@ public class ConnectionPool {
 
         @Override
         public void rollback() throws SQLException {
-
+            connection.rollback();
         }
 
         @Override
@@ -207,7 +213,7 @@ public class ConnectionPool {
             if (connection.isReadOnly()) {
                 connection.setReadOnly(false);
             }
-            if (!givenAwayConnection.remove(this)) {
+            if (!giveAwayConQueue.remove(this)) {
                 throw new SQLException("Error deleting connection from the used connection pool.");
             }
             if (!connectionQueue.offer(this)) {
@@ -312,7 +318,7 @@ public class ConnectionPool {
 
         @Override
         public void rollback(Savepoint savepoint) throws SQLException {
-            connection.rollback(savepoint);
+           connection.rollback(savepoint);
         }
 
         @Override

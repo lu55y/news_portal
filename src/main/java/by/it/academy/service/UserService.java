@@ -10,7 +10,7 @@ public interface UserService {
 
     boolean newUserRegistration(RegistrationInfo info) throws ServiceException;
 
-    User authorizationUser(String email, String password) throws ServiceException;
+    User authorizationUser(RegistrationInfo info) throws ServiceException;
 
     List<User> findAllUsers() throws ServiceException;
 

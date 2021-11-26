@@ -7,7 +7,7 @@ import by.it.academy.dao.exeption.DAOException;
 import java.util.List;
 
 public interface DAOUser {
-    User authorizationUser(String email, String password) throws DAOException;
+    User authorizationUser(RegistrationInfo info) throws DAOException;
 
     boolean create(RegistrationInfo info) throws DAOException;
 

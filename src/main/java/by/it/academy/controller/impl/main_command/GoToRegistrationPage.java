@@ -1,4 +1,4 @@
-package by.it.academy.controller.impl.user_command;
+package by.it.academy.controller.impl.main_command;
 
 import by.it.academy.controller.Command;
 import jakarta.servlet.RequestDispatcher;
@@ -8,12 +8,14 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-public class RegistrationPage implements Command {
+public class GoToRegistrationPage implements Command {
     private static final String REGISTRATION_PAGE = "/WEB-INF/jsp/registration_page.jsp";
+    public static final String SESSION_LAST_URL = "lastUrl";
+    public static final String SESSION_LAST_COMMAND = "GO_TO_REGISTRATION_PAGE";
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+        request.getSession(false).setAttribute(SESSION_LAST_URL, SESSION_LAST_COMMAND);
         RequestDispatcher requestDispatcher = request.getRequestDispatcher(REGISTRATION_PAGE);
         requestDispatcher.forward(request, response);
     }

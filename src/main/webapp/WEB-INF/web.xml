@@ -4,28 +4,44 @@
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
          id="WebApp_ID" version="2.5">
   <display-name>newsPortal</display-name>
+
   <welcome-file-list>
     <welcome-file>index.jsp</welcome-file>
   </welcome-file-list>
+
   <servlet>
     <display-name>Controller</display-name>
     <servlet-name>Controller</servlet-name>
     <servlet-class>by.it.academy.controller.Controller</servlet-class>
   </servlet>
+
   <servlet-mapping>
     <servlet-name>Controller</servlet-name>
     <url-pattern>/Controller</url-pattern>
   </servlet-mapping>
+
   <listener>
     <listener-class>by.it.academy.listener.ConnectionPoolListener</listener-class>
   </listener>
+
+  <listener>
+    <listener-class>by.it.academy.listener.SessionListener</listener-class>
+  </listener>
+
   <filter>
-    <display-name>CharsetEncodingFilter</display-name>
-    <filter-name>CharsetEncodingFilter</filter-name>
-    <filter-class>by.it.academy.filter.CharsetEncodingFilter</filter-class>
-    <init-param>
-      <param-name>characterEncoding</param-name>
-      <param-value>utf-8</param-value>
-    </init-param>
+    <filter-name>SessionFilter</filter-name>
+    <filter-class>by.it.academy.filter.SessionFilter</filter-class>
   </filter>
+
+  <filter-mapping>
+    <filter-name>SessionFilter</filter-name>
+    <url-pattern>/Controller</url-pattern>
+  </filter-mapping>
+
+  <error-page>
+    <!-- Missing resource -->
+    <error-code>404</error-code>
+    <location>/WEB-INF/jsp/404.html</location>
+  </error-page>
+
 </web-app>

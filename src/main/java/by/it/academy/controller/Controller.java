@@ -1,31 +1,35 @@
 package by.it.academy.controller;
 
+import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.io.Serial;
 
 public class Controller extends HttpServlet {
 
+	@Serial
 	private static final long serialVersionUID = 1L;
-	
 	private static final String COMMAND_REQUEST_PARAM = "command";
-
-	private final CommandDispatcher dispatcher = new CommandDispatcher();
-	
-	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		doPost(req, resp);
-	}
+	private final CommandDispatcher provider = new CommandDispatcher();
 
 	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		String commandName = req.getParameter(COMMAND_REQUEST_PARAM);
-		Command command = dispatcher.getCommand(commandName);
-		command.execute(req, resp);
+	public void init(ServletConfig config) throws ServletException {
+		super.init(config);
 	}
 
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		doPost(request, response);
+	}
 
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		String commandName = request.getParameter(COMMAND_REQUEST_PARAM);
+		Command command = provider.getCommand(commandName);
+		command.execute(request, response);
+	}
 }

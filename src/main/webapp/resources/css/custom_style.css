@@ -1,0 +1,108 @@
+body, html {
+    height: 100%;
+}
+body{
+    background: white url(../images/background_image.jpg) no-repeat fixed center;
+}
+.reg-form {
+    position: absolute;
+    width: 450px;
+    height: 350px;
+    left: 30%;
+    top: 15%;
+    background: #e3f2fd;
+    border: darkgray solid 1px;
+    padding: 10px;
+}
+.page-head{
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin: 50px;
+}
+.admin-page-head{
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin: 50px;
+}
+.wrapper{
+    display: flex;
+    min-width: 700px;
+    min-height: 100%;
+    max-width: 800px;
+    margin: auto;
+    background: #F5F7FA;
+    font: 14px/20px Arial, Helvetica, sans-serif;
+}
+.last-news{
+    padding: 25px;
+    max-width: 800px;
+}
+.news-foot{
+    margin-bottom: 40px;
+    margin-top: 10px;
+    display:flex;
+    min-width: 300px;
+    justify-content: space-between;
+}
+.news-foot-admin{
+    margin-bottom: 40px;
+}
+.navbar{
+    background: #e3f2fd;
+    height: 80px;
+}
+.nav-container{
+    align-items: center;
+    margin: auto;
+}
+.nav-container ul{
+    margin-top: revert;
+    display: flex;
+    min-width: 300px;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    list-style: none;
+}
+.nav-user-items{
+    align-items: center;
+    display: flex;
+}
+.page-foot{
+    background: #e3f2fd;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font: 0.8em Arial, Helvetica, sans-serif;
+}
+.auth-form {
+    margin-left: 50%;
+    width: 350px;
+    background: #e3f2fd;
+    border: darkgray solid 1px;
+    padding: 10px;
+}
+.main-news-foot{
+    display: flex;
+    min-width: 300px;
+    width:max-content;
+    text-decoration-line: none
+}
+.foot-button-grp{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+.foot-status-grp{
+    padding-left: 25px;
+    display: flex;
+    justify-content: space-between;
+    width: 80%;
+}
+.navb-btn-user{
+    margin-left: 10px;
+}

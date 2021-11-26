@@ -12,15 +12,24 @@ public class Comment implements Serializable {
     private int id;
     private String commentContent;
     private String dateOfPublication;
-    private int news_id;
-    private int user_id;
+    private int newsId;
+    private int userId;
+    private String userName;
 
-    public Comment(int id, String commentContent, String dateOfPublication, int news_id, int user_id) {
+    public Comment(int id, String commentContent, String dateOfPublication, int newsId, int userId, String userName) {
         this.id = id;
         this.commentContent = commentContent;
         this.dateOfPublication = dateOfPublication;
-        this.news_id = news_id;
-        this.user_id = user_id;
+        this.newsId = newsId;
+        this.userId = userId;
+        this.userName = userName;
+    }
+
+    public Comment(String commentContent, int newsId, int userId, String userName) {
+        this.commentContent=commentContent;
+        this.newsId = newsId;
+        this.userId = userId;
+        this.userName=userName;
     }
 
     public int getId() {
@@ -47,20 +56,28 @@ public class Comment implements Serializable {
         this.dateOfPublication = dateOfPublication;
     }
 
-    public int getNews_id() {
-        return news_id;
+    public int getNewsId() {
+        return newsId;
     }
 
-    public void setNews_id(int news_id) {
-        this.news_id = news_id;
+    public void setNewsId(int newsId) {
+        this.newsId = newsId;
     }
 
-    public int getUser_id() {
-        return user_id;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setUser_id(int user_id) {
-        this.user_id = user_id;
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     @Override
@@ -68,12 +85,12 @@ public class Comment implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Comment comment = (Comment) o;
-        return id == comment.id && news_id == comment.news_id && user_id == comment.user_id && Objects.equals(commentContent, comment.commentContent) && Objects.equals(dateOfPublication, comment.dateOfPublication);
+        return id == comment.id && newsId == comment.newsId && userId == comment.userId && Objects.equals(commentContent, comment.commentContent) && Objects.equals(dateOfPublication, comment.dateOfPublication) && Objects.equals(userName, comment.userName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, commentContent, dateOfPublication, news_id, user_id);
+        return Objects.hash(id, commentContent, dateOfPublication, newsId, userId, userName);
     }
 
     @Override
@@ -82,8 +99,9 @@ public class Comment implements Serializable {
                 "id=" + id +
                 ", commentContent='" + commentContent + '\'' +
                 ", dateOfPublication='" + dateOfPublication + '\'' +
-                ", news_id=" + news_id +
-                ", user_id=" + user_id +
+                ", news_id=" + newsId +
+                ", user_id=" + userId +
+                ", userName='" + userName + '\'' +
                 '}';
     }
 }

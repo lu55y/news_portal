@@ -85,4 +85,13 @@ public class NewsServiceImpl implements NewsService {
             throw new ServiceException(e);
         }
     }
+
+    @Override
+    public List<News> getLastNews() throws ServiceException {
+        try {
+            return daoNews.findLatestPublishedNews();
+        } catch (DAOException e) {
+            throw new ServiceException(e);
+        }
+    }
 }

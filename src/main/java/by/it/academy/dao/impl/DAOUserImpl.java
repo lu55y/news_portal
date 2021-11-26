@@ -16,11 +16,11 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class DAOUserImpl implements DAOUser {
     private static final ConnectionPool CONNECTION_POOL = ConnectionPool.getInstance();
-    private static final ReentrantLock LOCKER=new ReentrantLock();
+    private static final ReentrantLock LOCKER = new ReentrantLock();
     private static final String REGISTER_NEW_USER = "INSERT INTO news_portal.user (name, surname, email, password, role, dateOfRegistration) values (?,?,?,?,DEFAULT,?)";
     private static final String FIND_ALL_USERS = "SELECT * FROM news_portal.user";
     private static final String USER_AUTHORIZATION = "SELECT * FROM news_portal.user WHERE email=? AND password=?";
-    private static final String UPDATE_USER_INFORMATION = "UPDATE news_portal.user SET name=? and surname=? and email=? and password=? WHERE id=?";
+    private static final String UPDATE_USER_INFORMATION = "UPDATE news_portal.user SET name=?, surname=?, email=?, password=? WHERE id=?";
     private static final String FIND_USER_BY_ID = "SELECT * FROM news_portal.user WHERE id=?";
     private static final String DELETE_BY_ID = "DELETE user FROM news_portal.user WHERE id=?";
 
@@ -35,16 +35,16 @@ public class DAOUserImpl implements DAOUser {
 
 
     @Override
-    public User authorizationUser(String email, String password) throws DAOException {
+    public User authorizationUser(RegistrationInfo registrationInfo) throws DAOException {
         LOCKER.lock();
         ResultSet resultSet = null;
         try (Connection connection = CONNECTION_POOL.takeConnection();
              PreparedStatement prepStmt = connection.prepareStatement(USER_AUTHORIZATION)) {
-            prepStmt.setString(1, email);
-            prepStmt.setString(2, password);
+            prepStmt.setString(1, registrationInfo.getEmail());
+            prepStmt.setString(2, registrationInfo.getPassword());
             resultSet = prepStmt.executeQuery();
-            if (resultSet.wasNull()) {
-                throw new DAOException("User authorization error.");
+            if (!resultSet.next()) {
+                return null;
             }
             return new User(resultSet.getInt(USER_ID),
                     resultSet.getString(USER_NAME),
@@ -78,6 +78,9 @@ public class DAOUserImpl implements DAOUser {
         try (Connection connection = CONNECTION_POOL.takeConnection();
              PreparedStatement prepStmt = connection.prepareStatement(FIND_ALL_USERS);
              ResultSet resultSet = prepStmt.executeQuery()) {
+            if (!resultSet.next()){
+                return null;
+            }
             while (resultSet.next()) {
                 users.add(new User(
                         resultSet.getInt(USER_ID),
@@ -203,8 +206,8 @@ public class DAOUserImpl implements DAOUser {
     }
 
     private String getDate() {
-        Date date = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
+        Timestamp date=new Timestamp(new Date().getTime());
         return dateFormat.format(date);
     }
 }

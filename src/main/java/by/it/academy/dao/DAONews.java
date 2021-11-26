@@ -18,6 +18,8 @@ public interface DAONews{
 
     List<News> findAllPublished() throws DAOException;
 
+    List<News> findLatestPublishedNews() throws DAOException;
+
     boolean offerNews(News news) throws DAOException;
 
     boolean publishNews(News news)throws DAOException;

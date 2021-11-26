@@ -6,10 +6,7 @@ import by.it.academy.dao.config.ConnectionPool;
 import by.it.academy.dao.exeption.ConnectionPoolException;
 import by.it.academy.dao.exeption.DAOException;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,10 +20,11 @@ public class DAONewsImpl implements DAONews {
     private static final String SHOW_ALL_NEWS = "SELECT * FROM news_portal.news";
     private static final String SHOW_NEWS_BY_TITLE = "SELECT * FROM news_portal.news WHERE news.title=?";
     private static final String FIND_NEWS_BY_ID = "SELECT * FROM news_portal.news WHERE news.id=?";
-    private static final String UPDATE_NEWS = "UPDATE news_portal.news SET news.title=? and news.brief_description=? and news.content=? WHERE news.id=?";
+    private static final String UPDATE_NEWS = "UPDATE news_portal.news SET news.title=?, news.brief_description=?, news.content=? WHERE news.id=?";
     private static final String DELETE_NEWS_BY_ID = "DELETE FROM news_portal.news WHERE news.id=?";
-    private static final String OFFER_NEWS = "INSERT INTO news_portal.news (title, brief_description, content, date_of_publication, news_status) VALUES (?,?,?,?,DEFAULT)";
+    private static final String OFFER_NEWS = "INSERT INTO news_portal.news (title, brief_description, content, date_of_publication, news_status) VALUES (?,?,?,?,?)";
     private static final String PUBLISH_NEWS = "UPDATE news_portal.news SET news.news_status=? WHERE news.id=?";
+    private static final String GET_LATEST_PUBLISHED_NEWS= "SELECT * FROM news_portal.news WHERE news_status = 'PUBLISHED' ORDER BY date_of_publication DESC LIMIT 5 ";
 
     private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
     private final String ID="id";
@@ -61,6 +59,7 @@ public class DAONewsImpl implements DAONews {
         }
     }
 
+    @Override
     public List<News> findAllPublished() throws DAOException {
         List<News> listNews = new ArrayList<>();
         try (Connection connection = CONNECTION_POOL.takeConnection();
@@ -81,6 +80,28 @@ public class DAONewsImpl implements DAONews {
             throw new DAOException("News search error:", e);
         } catch (ConnectionPoolException e) {
             //log
+            throw new DAOException("Connection error:", e);
+        }
+    }
+    @Override
+    public List<News> findLatestPublishedNews() throws DAOException {
+        List<News> listNews = new ArrayList<>();
+        try (Connection connection = CONNECTION_POOL.takeConnection();
+             PreparedStatement prepStmt = connection.prepareStatement(GET_LATEST_PUBLISHED_NEWS);
+             ResultSet resultSet = prepStmt.executeQuery()) {
+            while (resultSet.next()) {
+                News news = new News(resultSet.getInt(ID),
+                        resultSet.getString(TITLE),
+                        resultSet.getString(BRIEF_DESCRIPTION),
+                        resultSet.getString(CONTENT),
+                        resultSet.getString(DATE_OF_PUBLICATION),
+                        resultSet.getString(NEWS_STATUS));
+                listNews.add(news);
+            }
+            return listNews;
+        } catch (SQLException e) {
+            throw new DAOException("News search error:", e);
+        } catch (ConnectionPoolException e) {
             throw new DAOException("Connection error:", e);
         }
     }
@@ -187,10 +208,8 @@ public class DAONewsImpl implements DAONews {
             int i = prepStmt.executeUpdate();
             if (i >= 1) return true;
         } catch(SQLException e){
-            //log
             throw new DAOException("Deleting news by id error:", e);
         } catch (ConnectionPoolException e) {
-            //log
             throw new DAOException("Connection error:", e);
         }finally {
             LOCKER.unlock();
@@ -203,17 +222,17 @@ public class DAONewsImpl implements DAONews {
         LOCKER.lock();
         try (Connection connection = CONNECTION_POOL.takeConnection();
              PreparedStatement prepStmt = connection.prepareStatement(OFFER_NEWS)) {
+            String status = "IN_PROCESSING";
             prepStmt.setString(1, news.getTitle());
             prepStmt.setString(2, news.getBriefDescription());
             prepStmt.setString(3, news.getContent());
             prepStmt.setString(4, getDate());
+            prepStmt.setString(5, status);
             int i = prepStmt.executeUpdate();
             if (i >= 1) return true;
         } catch (SQLException e) {
-            //log
             throw new DAOException("Error creating news:", e);
         } catch (ConnectionPoolException e) {
-            //log
             throw new DAOException("Connection error:", e);
         }finally {
             LOCKER.unlock();
@@ -232,10 +251,8 @@ public class DAONewsImpl implements DAONews {
             int i = prepStmt.executeUpdate();
             if (i >= 1) return true;
         } catch (SQLException e) {
-            //log
             throw new DAOException("News update error:", e);
         } catch (ConnectionPoolException e) {
-            //log
             throw new DAOException("Connection error:", e);
         }finally {
             LOCKER.unlock();
@@ -244,8 +261,8 @@ public class DAONewsImpl implements DAONews {
     }
 
     private String getDate() {
-        Date date = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
+        Timestamp date=new Timestamp(new Date().getTime());
         return dateFormat.format(date);
     }
 }

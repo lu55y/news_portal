@@ -25,6 +25,18 @@ public class RegistrationInfo implements Serializable {
         this.dateOfRegistration = dateOfRegistration;
     }
 
+    public RegistrationInfo(String email, String password) {
+        this.email=email;
+        this.password=password;
+    }
+
+    public RegistrationInfo(String name, String surname, String email, String password) {
+        this.name = name;
+        this.surname = surname;
+        this.email = email;
+        this.password = password;
+    }
+
     public String getName() {
         return name;
     }

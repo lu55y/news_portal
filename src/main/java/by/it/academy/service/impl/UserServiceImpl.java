@@ -18,19 +18,31 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean newUserRegistration(RegistrationInfo info) throws ServiceException {
-        boolean validate = validation.validate(info);
-        if (validate) {
-            try {
-                return daoUser.create(info);
-            } catch (DAOException e) {
-                throw new ServiceException(e);
-            }
-        }return false;
+//        boolean validate = validation.validate(info);
+//        if (validate) {
+//            try {
+//                return daoUser.create(info);
+//            } catch (DAOException e) {
+//                throw new ServiceException(e);
+//            }
+//        }
+//        System.out.println("bad validation");
+//        return false;
+        try {
+            return daoUser.create(info);
+        } catch (DAOException e) {
+            throw new ServiceException(e);
+        }
     }
 
     @Override
-    public User authorizationUser(String email, String password) throws ServiceException {
-        boolean validate = validation.validate(email, password);
+    public User authorizationUser(RegistrationInfo info) throws ServiceException {
+        try {
+            return daoUser.authorizationUser(info);
+        } catch (DAOException e) {
+            throw new ServiceException("User authorization exception",e);
+        }
+        /*        boolean validate = validation.validate(email, password);
         if (validate) {
             try {
                 return daoUser.authorizationUser(email, password);
@@ -38,7 +50,8 @@ public class UserServiceImpl implements UserService {
                 throw new ServiceException(e);
             }
         }
-        return null;
+        System.out.println("bad validation");
+        return null;*/
     }
 
     @Override

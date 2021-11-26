@@ -3,18 +3,16 @@ package by.it.academy.dao.config;
 import java.util.ResourceBundle;
 
 public class DBResourceManager {
-
-    private final static String DB_RESOURCE = "resources.db";
-
-    private final static DBResourceManager instance = new DBResourceManager();
-
-    private final ResourceBundle resourceBundle = ResourceBundle.getBundle(DB_RESOURCE);
+    private static final String DB_RESOURCE="db_config";
+    private static final DBResourceManager instance = new DBResourceManager();
 
     public static DBResourceManager getInstance() {
         return instance;
     }
 
-    public String getValue(String key) {
+    private ResourceBundle resourceBundle=ResourceBundle.getBundle(DB_RESOURCE);
+
+    public String getKey(String key) {
         return resourceBundle.getString(key);
     }
 }

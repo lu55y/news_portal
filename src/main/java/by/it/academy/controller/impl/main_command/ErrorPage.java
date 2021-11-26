@@ -14,7 +14,6 @@ public class ErrorPage implements Command {
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
 		RequestDispatcher requestDispatcher = request.getRequestDispatcher(ERROR_PAGE);
 		requestDispatcher.forward(request, response);
 	}
